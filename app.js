@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
+const pageNotFoundRoutes = require('./routes/page-not-found')
 const errorController = require('./controllers/error');
 
 const app = express();
@@ -17,10 +18,10 @@ const port = 3000;
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/admin', adminRoutes);
+app.use(adminRoutes);
 app.use(shopRoutes);
 
-app.use(errorController);
+app.use(pageNotFoundRoutes);
 
 app.listen(port, () => {
   console.log(`App listening at http://localhost:${port}`);
