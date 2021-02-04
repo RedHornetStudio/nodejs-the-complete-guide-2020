@@ -21,17 +21,11 @@ const getProducts = (req, res, next) => {
 };
 
 const getProductDetails = (req, res, next) => {
-  Product.fetchAll(products => {
-    let product;
-    products.forEach(elem => {
-      if(elem.id == req.params.productId) {
-        product = elem; 
-      }
-    });
+  Product.getProductById(req.params.productId, product => {
     res.render('shop/product-detail', {
       product: product,
       pageTitle: 'Product Details',
-      path: '/product-detail',
+      path: '/products',
       productId: req.params.productId
     });
   });
@@ -42,6 +36,11 @@ const getCart = (req, res, next) => {
     pageTitle: 'Cart',
     path: '/cart'
   });
+};
+
+const postCart = (req, res, next) => {
+  console.log(req.body.productId);
+  res.redirect('/cart');
 };
 
 const getCheckout = (req, res, next) => {
@@ -63,6 +62,7 @@ module.exports = {
   getProducts,
   getProductDetails,
   getCart,
+  postCart,
   getCheckout,
   getOrders
 }
