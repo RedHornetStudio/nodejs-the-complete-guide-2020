@@ -13,7 +13,7 @@ class Product {
   save(callback) {
     Product.fetchAll(data => {
       let products = data;
-      this.id = products.length.toString();
+      this.id = products.length;
       products.push(this);
       fs.writeFile(pathToData, JSON.stringify(products), err => {
         if(err) {
@@ -35,14 +35,9 @@ class Product {
     });
   }
 
-  static getProductById(productId, callback) {
+  static getById(productId, callback) {
     Product.fetchAll(products => {
-      let product = null;
-      products.forEach(elem => {
-        if(elem.id === productId) {
-          product = elem;
-        }
-      });
+      const product = products.find(p => p.id === productId);
       callback(product);
     });
   }

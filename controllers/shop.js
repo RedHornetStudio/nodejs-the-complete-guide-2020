@@ -1,6 +1,7 @@
 const Product = require('../models/product');
+const Cart = require('../models/cart');
 
-const getIndex = (req, res, next) => {
+exports.getIndex = (req, res, next) => {
   Product.fetchAll(products => {
     res.render('shop/index', {
       prods: products,
@@ -10,7 +11,7 @@ const getIndex = (req, res, next) => {
   });
 };
 
-const getProducts = (req, res, next) => {
+exports.getProducts = (req, res, next) => {
   Product.fetchAll(products => {
     res.render('shop/product-list', {
       prods: products,
@@ -20,49 +21,41 @@ const getProducts = (req, res, next) => {
   });
 };
 
-const getProductDetails = (req, res, next) => {
-  Product.getProductById(req.params.productId, product => {
+exports.getProduct = (req, res, next) => {
+  Product.getById(parseInt(req.params.productId), product => {
     res.render('shop/product-detail', {
       product: product,
       pageTitle: 'Product Details',
-      path: '/products',
-      productId: req.params.productId
+      path: '/products'
     });
   });
 };
 
-const getCart = (req, res, next) => {
+exports.getCart = (req, res, next) => {
   res.render('shop/cart', {
     pageTitle: 'Cart',
     path: '/cart'
   });
 };
 
-const postCart = (req, res, next) => {
-  console.log(req.body.productId);
-  res.redirect('/cart');
+exports.postCart = (req, res, next) => {
+  Product.getById(parseInt(req.body.productId), product => {
+    Cart.addProduct(product.id, product.price, () => {
+      res.redirect('/cart');
+    });
+  });
 };
 
-const getCheckout = (req, res, next) => {
+exports.getCheckout = (req, res, next) => {
   res.render('shop/checkout', {
     pageTitle: 'Checkout',
     path: '/checkout'
   });
 };
 
-const getOrders = (req, res, next) => {
+exports.getOrders = (req, res, next) => {
   res.render('shop/orders', {
     pageTitle: 'Orders',
     path: '/orders'
   })
 };
-
-module.exports = {
-  getIndex,
-  getProducts,
-  getProductDetails,
-  getCart,
-  postCart,
-  getCheckout,
-  getOrders
-}
