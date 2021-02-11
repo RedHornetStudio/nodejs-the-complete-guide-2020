@@ -27,6 +27,26 @@ class Cart {
       });
     });
   }
+
+  static delete(id) {
+    fs.readFile(pathToData, (err, fileContent) => {
+      if(err) {
+        console.log(err);
+        return;
+      }
+      const cart = JSON.parse(fileContent);
+      const product = cart.products.find(p => p.id === id);
+      if(product) {
+        cart.products = cart.products.filter(p => p.id !== id);
+        cart.totalPrice = cart.totalPrice - product.price * product.qty;
+        fs.writeFile(pathToData, JSON.stringify(cart), err => {
+          if(err) {
+            console.log(err);
+          }
+        });
+      }
+    });
+  }
 }
 
 module.exports = Cart;

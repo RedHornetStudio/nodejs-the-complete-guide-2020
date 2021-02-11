@@ -1,20 +1,35 @@
 const fs = require('fs');
 const path = require('path');
+const Cart = require('../models/cart');
+
+const cart = require('../models/cart');
+
 const pathToData = path.join(path.dirname(require.main.filename), 'data', 'products.json');
 
 class Product {
-  constructor(title, imageUrl, price, description) {
+  constructor(title, imageUrl, price, description, id) {
     this.title = title;
     this.imageUrl = imageUrl;
     this.price = price;
     this.description = description;
+    this.id = id;
   }
 
   save(callback) {
-    Product.fetchAll(data => {
-      let products = data;
-      this.id = products.length;
-      products.push(this);
+    Product.fetchAll(productsData => {
+      let products = productsData;
+      if(this.id) {
+        const existingProductIndex = products.findIndex(product => product.id === this.id);
+        products[existingProductIndex] = this;
+      } else {
+        console.log(products.length, products[products.length]);
+        if(products.length === 0) {
+          this.id = 0;
+        } else {
+          this.id = products[products.length - 1].id + 1;
+        }
+        products.push(this);
+      }
       fs.writeFile(pathToData, JSON.stringify(products), err => {
         if(err) {
           console.log(err);
@@ -40,6 +55,22 @@ class Product {
       const product = products.find(p => p.id === productId);
       callback(product);
     });
+  }
+
+  static delete(productId, callback) {
+    Product.fetchAll(productsData => {
+      let products = productsData;
+      const existingProductIndex = products.findIndex(product => product.id === productId);
+      products.splice(existingProductIndex, 1);
+      fs.writeFile(pathToData, JSON.stringify(products), err => {
+        if(err) {
+          console.log(err);
+        } else {
+          Cart.delete(productId);
+          callback();
+        }
+      });
+    })
   }
 }
 
