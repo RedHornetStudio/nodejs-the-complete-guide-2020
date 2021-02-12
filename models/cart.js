@@ -28,7 +28,7 @@ class Cart {
     });
   }
 
-  static delete(id) {
+  static delete(id, callback) {
     fs.readFile(pathToData, (err, fileContent) => {
       if(err) {
         console.log(err);
@@ -42,8 +42,23 @@ class Cart {
         fs.writeFile(pathToData, JSON.stringify(cart), err => {
           if(err) {
             console.log(err);
+          } else {
+            callback();
           }
         });
+      } else {
+        callback();
+      }
+    });
+  }
+
+  static getProducts(callback) {
+    fs.readFile(pathToData, (err, fileContent) => {
+      if(err) {
+        callback(null)
+      } else {
+        const cart = JSON.parse(fileContent);
+        callback(cart);
       }
     });
   }
