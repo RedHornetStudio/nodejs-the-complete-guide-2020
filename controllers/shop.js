@@ -32,7 +32,7 @@ exports.getProduct = (req, res, next) => {
 };
 
 exports.getCart = (req, res, next) => {
-  Cart.getProducts(cart => {
+  Cart.getCart(cart => {
     const cartProducts = [];
     let totalPrice = 0;
     if(cart) {

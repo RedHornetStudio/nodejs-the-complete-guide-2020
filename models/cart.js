@@ -26,7 +26,7 @@ class Cart {
     });
   }
 
-  static getProducts(callback) {
+  static getCart(callback) {
     fs.readFile(pathToData, (err, fileContent) => {
       if(err) {
         callback(null)
