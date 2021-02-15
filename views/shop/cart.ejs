@@ -11,7 +11,7 @@
                     <div class="title">Title: <%= product.title %></div>
                     <div class="price">Price: <%= product.price %></div>
                     <div class="qty">Quantity:  <%= product.qty %></div>
-                    <form action="/admin/delete-from-cart" method="POST">
+                    <form action="/cart/delete-product" method="POST">
                       <input type="hidden" name="productId" value="<%= product.id %>">
                       <button type="submit">delete</button>
                     </form>
