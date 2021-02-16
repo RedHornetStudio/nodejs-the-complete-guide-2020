@@ -1,13 +1,22 @@
 const Product = require('../models/product');
 
 exports.getProducts = (req, res, next) => {
-  Product.fetchAll(products => {
-    res.render('admin/products', {
-      prods: products,
-      pageTitle: 'Admin Products',
-      path: '/admin/products'
+  Product.fetchAll()
+    .then(([rows, fieldData]) => {
+      res.render('admin/products', {
+        prods: rows,
+        pageTitle: 'Admin Products',
+        path: '/admin/products'
+      });
+    })
+    .catch(err => {
+      console.log(err);
+      res.render('admin/products', {
+        prods: [],
+        pageTitle: 'Admin Products',
+        path: '/admin/products'
+      });
     });
-  });
 };
 
 exports.getAddProduct = (req, res, next) => {
@@ -19,24 +28,32 @@ exports.getAddProduct = (req, res, next) => {
 };
 
 exports.postAddProduct = (req, res, next) => {
-  const product = new Product(req.body.title, req.body.imageUrl, parseInt(req.body.price), req.body.description);
-  product.save(() => {
-  res.redirect('/');
-  });
+  const product = new Product(req.body.title, req.body.imageUrl, parseFloat(req.body.price), req.body.description);
+  product.save()
+    .then(() => {
+      res.redirect('/');
+    })
+    .catch(err => {
+      console.log(err);
+    });
 };
 
 exports.getEditProduct = (req, res, next) => {
-  Product.getById(parseInt(req.params.productId), product => {
-    res.render('admin/edit-product', {
-      product: product,
-      pageTitle: 'Edit Product',
-      path: '/admin/products'
+  Product.getById(parseInt(req.params.productId))
+    .then(([rows, fieldData]) => {
+      res.render('admin/edit-product', {
+        product: rows[0],
+        pageTitle: 'Edit Product',
+        path: '/admin/products'
+      });
+    })
+    .catch(err => {
+      console.log(err);
     });
-  });
 };
 
 exports.postEditProduct = (req, res, next) => {
-  const product = new Product(req.body.title, req.body.imageUrl, parseInt(req.body.price), req.body.description, parseInt(req.body.productId));
+  const product = new Product(req.body.title, req.body.imageUrl, parseFloat(req.body.price), req.body.description, parseInt(req.body.productId));
   product.save(() => {
     res.redirect('/admin/products');
   });
